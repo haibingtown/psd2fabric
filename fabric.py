@@ -45,18 +45,19 @@ class ImageLayer(Layer):
         # 将图像转换为Base64编码
         image_stream = BytesIO()
         image.save(image_stream, format="png")
-        self.src = "data:image/png;base64," + base64.b64encode(image_stream.getvalue()).decode('utf-8')
+        # self.src = "data:image/png;base64," + base64.b64encode(image_stream.getvalue()).decode('utf-8')
 
 
 class GroupLayer(Layer):
-    children = []
     def __init__(self, name, left, top, width, height):
         # 调用父类的构造方法
         super().__init__(name, "group", left, top, width, height)
+        self.objects = []
 
-    def add(self, layer: Layer):
-        self.children.append(layer)
-
+    def add(self, objs: list):
+        for obj in objs:
+            # print(obj)
+            self.objects.append(obj)
 
 class Fabric:
     def __init__(self, objs, left, top, width, height):
@@ -119,7 +120,7 @@ def dump_fabric(objs, left, top, right, bottom, file):
 
 def dump_psd(psd_file, dump_file):
     psd = PSDImage.open(psd_file)
-    layers = parse_layers(psd.descendants())
+    layers = parse_layers(psd._layers)
     viewbox = psd.viewbox
     dump_fabric(layers, viewbox[0], viewbox[1], viewbox[2], viewbox[3], dump_file)
 
@@ -130,11 +131,11 @@ def parse_layers(psd_layers: list) -> list:
         if not layer.visible:
             continue
 
-        if layer.kind in ['group', 'artboard']:
-            # group = GroupLayer(layer.name, layer.left, layer.top, layer.width, layer.height)
-            # children = parse_layers(layer.child)
-            # group.add(children)
-            # res.append(group)
+        if layer.is_group():
+            group = GroupLayer(layer.name, layer.left, layer.top, layer.width, layer.height)
+            children = parse_layers(layer._layers)
+            group.add(children)
+            res.append(group)
             continue
 
         # 复杂图,暂时跳过
@@ -147,7 +148,7 @@ def parse_layers(psd_layers: list) -> list:
 
         res.append(ImageLayer(layer.name, layer.left, layer.top, layer.width, layer.height, image))
 
-        return res
+    return res
 
 
-dump_psd("./data/1.psd", "./data/demo.json")
+dump_psd("1.psd", "demo.json")
