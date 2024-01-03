@@ -28,8 +28,6 @@ class Layer:
         self.backgroundColor = ""
         self.skewX = 0
         self.skewY = 0
-        self.cropX = 0
-        self.cropY = 0
         self.selectable = True
         self.hasControls = True
         self.id = str(uuid.uuid4())
@@ -45,13 +43,17 @@ class ImageLayer(Layer):
         # 将图像转换为Base64编码
         image_stream = BytesIO()
         image.save(image_stream, format="png")
-        # self.src = "data:image/png;base64," + base64.b64encode(image_stream.getvalue()).decode('utf-8')
+        self.src = "data:image/png;base64," + base64.b64encode(image_stream.getvalue()).decode('utf-8')
 
 
 class GroupLayer(Layer):
     def __init__(self, name, left, top, width, height):
         # 调用父类的构造方法
         super().__init__(name, "group", left, top, width, height)
+        self.fill = "null"
+        self.fillRule = "nonzero"
+        self.paintFirst = "fill"
+        self.globalCompositeOperation = "source-over"
         self.objects = []
 
     def add(self, objs: list):
@@ -120,20 +122,21 @@ def dump_fabric(objs, left, top, right, bottom, file):
 
 def dump_psd(psd_file, dump_file):
     psd = PSDImage.open(psd_file)
-    layers = parse_layers(psd._layers)
+    layers = parse_layers(psd._layers, 0, 0)
     viewbox = psd.viewbox
     dump_fabric(layers, viewbox[0], viewbox[1], viewbox[2], viewbox[3], dump_file)
 
 
-def parse_layers(psd_layers: list) -> list:
+def parse_layers(psd_layers: list, relate_x, relate_y) -> list:
     res = []
     for layer in psd_layers:
         if not layer.visible:
             continue
 
         if layer.is_group():
-            group = GroupLayer(layer.name, layer.left, layer.top, layer.width, layer.height)
-            children = parse_layers(layer._layers)
+            group = GroupLayer(layer.name, layer.left - relate_x, layer.top - relate_y, layer.width, layer.height)
+            # group 内元素(left, top)默认是相对group center的
+            children = parse_layers(layer._layers, layer.left + layer.width // 2, layer.top + layer.height // 2)
             group.add(children)
             res.append(group)
             continue
@@ -146,9 +149,6 @@ def parse_layers(psd_layers: list) -> list:
 
         image = layer.composite()
 
-        res.append(ImageLayer(layer.name, layer.left, layer.top, layer.width, layer.height, image))
+        res.append(ImageLayer(layer.name, layer.left - relate_x, layer.top - relate_y, layer.width, layer.height, image))
 
     return res
-
-
-dump_psd("1.psd", "demo.json")
