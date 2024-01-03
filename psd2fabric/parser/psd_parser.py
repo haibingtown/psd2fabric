@@ -26,11 +26,11 @@ def parse_layers(psd_layers: list, relate_x, relate_y) -> list:
         print(f"==>{layer.layer_id}:{layer.name}:{layer.kind}")
 
         if layer.kind == 'type':
-            tlayer = type_parse.parse(layer, relate_x, relate_y)
+            tlayer = type_parser.parse(layer, relate_x, relate_y)
             res.append(tlayer)
             continue
 
-        ilayer = image_parse.parse(layer, relate_x, relate_y)
+        ilayer = image_parser.parse(layer, relate_x, relate_y)
         res.append(ilayer)
 
     return res
