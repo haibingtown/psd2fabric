@@ -1,6 +1,6 @@
 import sys
 
-from psd2fabric.fabric import dump_psd
+from psd2fabric.psd_fabric import dump_psd
 
 if __name__ == '__main__':
 
