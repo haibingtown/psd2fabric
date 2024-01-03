@@ -61,6 +61,48 @@ class GroupLayer(Layer):
             # print(obj)
             self.objects.append(obj)
 
+
+class TextLayer(Layer):
+    def __init__(self, name, left, top, width, height):
+        # 调用父类的构造方法
+        super().__init__(name, "i-text", left, top, width, height)
+        self.pathAlign = None
+        self.pathSide = None
+        self.pathStartOffset = None
+        self.direction = None
+        self.styles = None
+        self.charSpacing = None
+        self.textBackgroundColor = None
+        self.lineHeight = None
+        self.fontStyle = None
+        self.textAlign = None
+        self.linethrough = None
+        self.overline = None
+        self.underline = None
+        self.fontWeight = None
+        self.fontSize = None
+        self.fontFamily = None
+
+    def set_text(self, font_family, font_size, text):
+        self.fontFamily = font_family
+        self.fontSize = font_size
+        self.text = text
+        self.fontWeight = "normal"
+        self.underline = False
+        self.overline = False
+        self.linethrough = False
+        self.textAlign = "left"
+        self.fontStyle = "normal"
+        self.lineHeight = 0.86
+        self.textBackgroundColor = ""
+        self.charSpacing = 0
+        self.styles = []
+        self.direction = "ltr"
+        self.pathStartOffset = 0
+        self.pathSide = "left"
+        self.pathAlign = "baseline"
+
+
 class Fabric:
     def __init__(self, objs, left, top, width, height):
         self.version = "5.3.0"
@@ -133,6 +175,10 @@ def parse_layers(psd_layers: list, relate_x, relate_y) -> list:
         if not layer.visible:
             continue
 
+        # 复杂图,暂时跳过
+        if isinstance(layer, AdjustmentLayer) or isinstance(layer, FillLayer):
+            continue
+
         if layer.is_group():
             group = GroupLayer(layer.name, layer.left - relate_x, layer.top - relate_y, layer.width, layer.height)
             # group 内元素(left, top)默认是相对group center的
@@ -141,14 +187,30 @@ def parse_layers(psd_layers: list, relate_x, relate_y) -> list:
             res.append(group)
             continue
 
-        # 复杂图,暂时跳过
-        if isinstance(layer, AdjustmentLayer) or isinstance(layer, FillLayer):
-            continue
-
         print(f"==>{layer.layer_id}:{layer.name}:{layer.kind}")
 
-        image = layer.composite()
+        if layer.kind == 'type':
+            text = layer.engine_dict['Editor']['Text'].value
+            fontset = layer.resource_dict['FontSet']
+            runlength = layer.engine_dict['StyleRun']['RunLengthArray']
+            rundata = layer.engine_dict['StyleRun']['RunArray']
+            index = 0
+            for length, style in zip(runlength, rundata):
+                substring = text[index:index + length]
+                stylesheet = style['StyleSheet']['StyleSheetData']
+                font = fontset[stylesheet['Font']]
+                fontSize = stylesheet['FontSize']
+                fontName = fontset[stylesheet['Font']]['Name']
+                print('%r gets %s' % (substring, font))
+                index += length
+                break
 
+            tlayer = TextLayer(layer.name, layer.left - relate_x, layer.top - relate_y, layer.width, layer.height)
+            tlayer.set_text(fontName, fontSize * 10, text)
+            res.append(tlayer)
+            continue
+
+        image = layer.composite()
         res.append(ImageLayer(layer.name, layer.left - relate_x, layer.top - relate_y, layer.width, layer.height, image))
 
     return res
