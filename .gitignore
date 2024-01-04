@@ -129,3 +129,4 @@ yarn-error.log*
 *.pth
 .idea
 web/node_modules
+*.egg-info
