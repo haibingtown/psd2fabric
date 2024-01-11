@@ -9,16 +9,21 @@ from psd2fabric.fabric.text import TextFabricLayer
 def parse(layer: TypeLayer, relate_x, relate_y):
     text = layer.engine_dict['Editor']['Text'].value
     fontset = layer.resource_dict['FontSet']
+    styleSheetSet = layer.resource_dict['StyleSheetSet']
     runlength = layer.engine_dict['StyleRun']['RunLengthArray']
     rundata = layer.engine_dict['StyleRun']['RunArray']
     index = 0
     for length, style in zip(runlength, rundata):
         substring = text[index:index + length]
         stylesheet = style['StyleSheet']['StyleSheetData']
-        font = fontset[stylesheet['Font']]
+        if 'Font' in stylesheet:
+            fontType = stylesheet['Font']
+        else:
+            fontType = styleSheetSet[index]['StyleSheetData']['Font']
+
         font_size = stylesheet['FontSize']
         font_size = round(get_size(font_size, layer.transform), 2)
-        font_name = fontset[stylesheet['Font']]['Name']
+        font_name = fontset[fontType]['Name']
         font_color = get_color(stylesheet['FillColor']['Values'])
 
         print(f"{font_name}:{font_size}:{font_color}")
