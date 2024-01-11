@@ -130,3 +130,4 @@ yarn-error.log*
 .idea
 web/node_modules
 *.egg-info
+*.pyc

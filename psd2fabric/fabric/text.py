@@ -22,9 +22,11 @@ class TextFabricLayer(FabricLayer):
         self.fontSize = None
         self.fontFamily = None
 
-    def set_text(self, font_family, font_size, text):
+    def set_text(self, font_family, font_size, font_color, text):
+        self.fill = font_color
         self.fontFamily = font_family
         self.fontSize = font_size
+        self.paintFirst = "stroke" # "fill"内边框
         self.text = text
         self.fontWeight = "normal"
         self.underline = False

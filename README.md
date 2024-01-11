@@ -14,7 +14,13 @@ PSD2Fabric is a Python tool designed to parse PSD files into the fabric.js forma
 
 - Parse PSD files into fabric.js JSON format.
 - Support for common PSD elements like layers, text, shapes, etc.
-
+- Font
+  - font size
+  - font name
+  - font color
+- Effect
+  - stoker
+  
 ## Usage
 
 TODO

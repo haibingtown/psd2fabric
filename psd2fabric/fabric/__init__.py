@@ -26,6 +26,11 @@ class FabricLayer:
         self.id = str(uuid.uuid4())
         self.name = name
 
+    def set_stroke(self, color, size):
+        self.stroke = color
+        self.strokeWidth = size
+
+
 class Fabric:
     def __init__(self, objs, left, top, width, height):
         self.version = "5.3.0"
