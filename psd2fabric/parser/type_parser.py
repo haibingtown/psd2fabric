@@ -12,10 +12,13 @@ def parse(layer: TypeLayer, relate_x, relate_y):
     styleSheetSet = layer.resource_dict['StyleSheetSet']
     runlength = layer.engine_dict['StyleRun']['RunLengthArray']
     rundata = layer.engine_dict['StyleRun']['RunArray']
+    paragraph_rundata = layer.engine_dict['ParagraphRun']['RunArray']
     index = 0
-    for length, style in zip(runlength, rundata):
-        substring = text[index:index + length]
+    for length, style, paragraph in zip(runlength, rundata, paragraph_rundata):
+        # just use the first one
+        # substring = text[index:index + length]
         stylesheet = style['StyleSheet']['StyleSheetData']
+        paragraphsheet = paragraph['ParagraphSheet']['Properties']
         if 'Font' in stylesheet:
             fontType = stylesheet['Font']
         else:
@@ -25,13 +28,10 @@ def parse(layer: TypeLayer, relate_x, relate_y):
         font_size = round(get_size(font_size, layer.transform), 2)
         font_name = fontset[fontType]['Name']
         font_color = get_color(stylesheet['FillColor']['Values'])
-
-        print(f"{font_name}:{font_size}:{font_color}")
-        index += length
         break
 
     tlayer = TextFabricLayer(layer.name, layer.left - relate_x, layer.top - relate_y, layer.width, layer.height)
-    tlayer.set_text(font_name, font_size, font_color, text)
+    tlayer.set_text(font_name, font_size, font_color, get_bold(stylesheet), get_align(paragraphsheet), get_text(text))
     return tlayer
 
 
@@ -42,3 +42,22 @@ def get_color(color):
 
 def get_size(font_size, transform):
     return font_size * transform[0]
+
+def get_text(text):
+    return text.replace('\r', '\n')
+
+def get_align(paragraphsheet):
+    if not 'Justification' in paragraphsheet:
+        return 'left'
+
+    if paragraphsheet['Justification'] == 1:
+        return 'right'
+    elif paragraphsheet['Justification'] == 2:
+        return 'center'
+
+    return 'left'
+
+def get_bold(stylesheet):
+    if 'FauxBold' in stylesheet:
+        return stylesheet['FauxBold']
+    return False

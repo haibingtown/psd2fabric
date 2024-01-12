@@ -11,7 +11,7 @@ def custom_default(obj):
 
 def render_json(obj: Fabric):
     # 将 Person 对象转换为 JSON 字符串
-    return json.dumps(obj, default=custom_default)
+    return json.dumps(obj, default=custom_default, ensure_ascii=False)
 
 
 def dump_json_file(obj, file):
