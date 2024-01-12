@@ -41,11 +41,15 @@ To use PSD2Fabric, follow these steps:
 
 Replace input.psd with the path to your PSD file and output.json with the desired output JSON file.
 
-## Sample
+## Preview Online
 
 - Parse to JSON file and preview it on this online site: https://nihaojob.github.io/vue-fabric-editor/
 - Alternatively, deploy locally using this forked repository: https://github.com/haibingtown/vue-fabric-editor
 
+## Demo
+
+[test.json](asserts%2Fjson%2Ftest.json)
+![snapshot.jpeg](asserts%2Fimages%2Fsnapshot.jpeg)
 
 ## Contributing
 
