@@ -37,6 +37,7 @@ def parse(layer: TypeLayer, relate_x, relate_y):
         font_color,
         get_bold(stylesheet),
         get_align(paragraphsheet),
+        # writingDirection = 2 表明是竖版字，使用换行符实现竖版字
         text if writingDirection != 2 else "\n".join(list(text.replace("\n", "")))
     )
     return tlayer
