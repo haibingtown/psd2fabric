@@ -1,6 +1,3 @@
-import colorsys
-from colorsys import hsv_to_rgb
-
 from psd_tools.api.layers import TypeLayer
 
 from psd2fabric.fabric.text import TextFabricLayer
@@ -10,9 +7,11 @@ def parse(layer: TypeLayer, relate_x, relate_y):
     text = layer.engine_dict['Editor']['Text'].value
     fontset = layer.resource_dict['FontSet']
     styleSheetSet = layer.resource_dict['StyleSheetSet']
-    runlength = layer.engine_dict['StyleRun']['RunLengthArray']
-    rundata = layer.engine_dict['StyleRun']['RunArray']
-    paragraph_rundata = layer.engine_dict['ParagraphRun']['RunArray']
+    engineDict = layer.engine_dict
+    runlength = engineDict["StyleRun"]["RunLengthArray"]
+    rundata = engineDict["StyleRun"]["RunArray"]
+    paragraph_rundata = engineDict['ParagraphRun']['RunArray']
+    writingDirection = engineDict["Rendered"]["Shapes"]["WritingDirection"]
     index = 0
     for length, style, paragraph in zip(runlength, rundata, paragraph_rundata):
         # just use the first one
@@ -31,7 +30,16 @@ def parse(layer: TypeLayer, relate_x, relate_y):
         break
 
     tlayer = TextFabricLayer(layer.name, layer.left - relate_x, layer.top - relate_y, layer.width, layer.height)
-    tlayer.set_text(font_name, font_size, font_color, get_bold(stylesheet), get_align(paragraphsheet), get_text(text))
+    text = get_text(text)
+    tlayer.set_text(
+        font_name,
+        font_size,
+        font_color,
+        get_bold(stylesheet),
+        get_align(paragraphsheet),
+        # writingDirection = 2 表明是竖版字，使用换行符实现竖版字
+        text if writingDirection != 2 else "\n".join(list(text.replace("\n", "")))
+    )
     return tlayer
 
 
