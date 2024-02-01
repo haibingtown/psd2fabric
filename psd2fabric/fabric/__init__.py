@@ -33,8 +33,13 @@ class FabricLayer:
 
 class Fabric:
     def __init__(self, objs, left, top, width, height):
-        self.version = "5.3.0"
         self.objects = []
+        self.version = "5.3.0"
+        self.left = left
+        self.top = top
+        self.width = width
+        self.height = height
+        self.objs = objs
         self.clipPath = {
             "type": "rect",
             "version": "5.3.0",
@@ -43,25 +48,26 @@ class Fabric:
             "left": left,
             "top": top,
             "width": width,
-            "height": height
+            "height": height,
         }
 
+    def init_obj(self):
+        self.objects = []
         workspace = {
             "type": "rect",
             "version": "5.3.0",
             "originX": "left",
             "originY": "top",
-            "left": left,
-            "top": top,
-            "width": width,
-            "height": height,
+            "left": self.left,
+            "top": self.top,
+            "width": self.width,
+            "height": self.height,
             "fill": "#FC7245",
             "id": "workspace",
             "selectable": False,
-            "hasControls": False
+            "hasControls": False,
         }
-
         self.objects.append(workspace)
-        for obj in objs:
-            # print(obj)
+        for obj in self.objs:
             self.objects.append(obj)
+        self.objs = None

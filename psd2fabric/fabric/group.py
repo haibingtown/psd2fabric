@@ -13,5 +13,4 @@ class GroupFabricLayer(FabricLayer):
 
     def add(self, objs: list):
         for obj in objs:
-            # print(obj)
             self.objects.append(obj)

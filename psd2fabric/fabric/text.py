@@ -26,7 +26,7 @@ class TextFabricLayer(FabricLayer):
         self.fill = font_color
         self.fontFamily = font_family
         self.fontSize = font_size
-        self.paintFirst = "stroke" # "fill"内边框
+        self.paintFirst = "stroke"  # "fill"内边框
         self.text = text
         self.fontWeight = "normal"
         if text_bold:
