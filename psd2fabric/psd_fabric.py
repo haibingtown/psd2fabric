@@ -1,5 +1,6 @@
 import copy
 import os
+import random
 
 from psd_tools import PSDImage
 
@@ -12,10 +13,12 @@ from psd2fabric.parser.psd_parser import psd_to_fabric
 from psd2fabric.render.json_render import dump_json_file
 
 
-def dump_psd(psd_file, dump_file):
+def dump_psd():
+    psd_file = "/Users/sandog/sandog/ai/psd/丰玥小笼-特批套餐图.psd"
+    dump_file = "/Users/sandog/sandog/ai/fab_json/丰玥小笼-特批套餐图.json"
     psd = PSDImage.open(psd_file)
     fabric = psd_to_fabric(psd)
-    fabric.objs = demo_utils.generate_tiled_layers(fabric=fabric)
+    # fabric.objs = demo_utils.generate_tiled_layers(fabric=fabric)
     fabric.init_obj()
     dump_json_file(fabric, dump_file)
 

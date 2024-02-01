@@ -46,11 +46,12 @@ def dump_rule1(fabric: Fabric, psd_file: str, product_img: str):
             ori_center_x = int(
                 (ori_product_layer.left + ori_product_layer.width / 2) * all_scale
             )
-            ori_center_y = int(
-                (ori_product_layer.top + ori_product_layer.height / 2) * all_scale
-            )
+            # ori_center_y = int(
+            #     (ori_product_layer.top + ori_product_layer.height / 2) * all_scale
+            # )
             curr_product_left = int(ori_center_x - product_width / 2)
-            curr_product_top = int(ori_center_y - product_height / 2)
+            # curr_product_top = int(ori_center_y - product_height / 2)
+            curr_product_top = int((FINAL_HEIGHT - product_height) / 2)
             curr_rule_layers.append(
                 ImageFabricLayer(
                     "产品图",
