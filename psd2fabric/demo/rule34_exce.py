@@ -1,3 +1,5 @@
+import copy
+
 from psd2fabric.demo import demo_utils
 from psd2fabric.demo.demo_utils import (FINAL_HEIGHT, FINAL_WIDTH, LOGO_BORDER,
                                         TEXT_BORDER)
@@ -33,7 +35,7 @@ def dump_rule34(fabric: Fabric, psd_file: str, product_img: str):
     )
     text_layer = demo_utils.get_text_layer(tiled_layers=tiled_layers)
     logo_layer = demo_utils.get_logo_layer(tiled_layer=logo_layer)
-    rule3_lagers = rule_layers
+    rule3_lagers = copy.deepcopy(rule_layers)
     rule3_lagers.append(
         ImageFabricLayer(
             "产品图",
@@ -70,7 +72,7 @@ def dump_rule34(fabric: Fabric, psd_file: str, product_img: str):
         psd_file=psd_file, out_put_file_name=f"rule3", product_img=product_img
     )
     dump_json_file(rule3_fabric, dump_file)
-    rule4_lagers = rule_layers
+    rule4_lagers = copy.deepcopy(rule_layers)
     curr_width = fabric.width * all_scale
     start_left = int(curr_width - FINAL_WIDTH)
     rule4_lagers.append(

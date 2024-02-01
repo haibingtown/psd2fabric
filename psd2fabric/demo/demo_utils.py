@@ -1,6 +1,7 @@
 import base64
 import math
 import os
+import random
 from io import BytesIO
 
 from PIL import Image
@@ -18,6 +19,8 @@ TEXT_BORDER = 40
 PSD_DIR = "/Users/sandog/sandog/ai/psd2"
 PRODUCT_IMAGE_DIR = "/Users/sandog/sandog/ai/product_img"
 OUT_JSON_DIR = "/Users/sandog/sandog/ai/fab_json"
+
+font_array = ["font1", "font2", "font3"]
 
 
 def from_img_to_base64(ori_img: Image.Image):
@@ -51,6 +54,8 @@ def get_text_layer(tiled_layers):
             for tiled_layer in tiled_layers:
                 if tiled_layer.type == "i-text" and str(tiled_layer.fontFamily) == key:
                     tiled_layer.text = "菜品名称"
+                    tiled_layer.name = "菜品名称"
+                    tiled_layer.fontFamily = f"'{font_array[random.randint(0, len(font_array) - 1)]}'"
                     tiled_layer.fontSize = 80
                     tiled_layer.width = 320
                     tiled_layer.height = 90
@@ -67,7 +72,7 @@ def get_logo_layer(tiled_layer):
     if not tiled_layer:
         return tiled_layer
     logo_scale2 = (
-        FINAL_HEIGHT * FINAL_WIDTH * 9 / 80 / tiled_layer.width / tiled_layer.height
+        FINAL_HEIGHT * FINAL_WIDTH * 3 / 50 / tiled_layer.width / tiled_layer.height
     )
     logo_scale = math.sqrt(logo_scale2)
     tiled_layer.scaleX = logo_scale
