@@ -1,3 +1,5 @@
+
+
 # PSD2Fabric
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
@@ -34,10 +36,12 @@ To use PSD2Fabric, follow these steps:
 1. **Installation:**
    ```bash
    pip install psd2fabric
+   ```
 
 2. **Usage:**
    ```bash
     psd2fabric input.psd output.json
+   ```
 
 Replace input.psd with the path to your PSD file and output.json with the desired output JSON file.
 
